@@ -309,6 +309,7 @@
   width: 80vw;
   position: relative;
   margin: auto;
+  margin-bottom:65px;
   display: flex;
   align-items: center;
   justify-content: center;
