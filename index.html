@@ -366,26 +366,47 @@ function initMobileSlider() {
   }
 }
 
-// Button click handlers
+// Replace handleRightClick function:
 function handleRightClick() {
   if (!checkMobile()) return;
   
   clearTimeout(slideInterval);
-  if (currentImage < totalImages) {
-    currentImage++;
-    slideImage();
+  currentImage++;
+  if (currentImage > totalImages) {
+    currentImage = 4;
   }
+  displayCurrentImage();
+  slideInterval = setTimeout(slideImage, 3000);
 }
 
+// Replace handleLeftClick function:
 function handleLeftClick() {
   if (!checkMobile()) return;
   
   clearTimeout(slideInterval);
-  if (currentImage > 4) {
-    currentImage--;
-    slideImage();
+  currentImage--;
+  if (currentImage < 4) {
+    currentImage = totalImages;
   }
+  displayCurrentImage();
+  slideInterval = setTimeout(slideImage, 3000);
 }
+
+// Add this new function:
+function displayCurrentImage() {
+  logo.style.transform = 'translateX(100%)';
+  logo.innerHTML = `<img class="incrheight" src="assets/${currentImage}.webp" alt="" style="transform: translateX(-100%);" />`;
+  
+  setTimeout(() => {
+    logo.style.transform = 'translateX(0%)';
+    logo.querySelector('img').style.transform = 'translateX(0%)';
+  }, 100);
+  
+  console.log('Current Image:', currentImage);
+}
+
+// In slideImage function, replace the image display part with:
+displayCurrentImage();
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', initMobileSlider);
