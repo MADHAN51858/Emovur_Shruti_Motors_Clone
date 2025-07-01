@@ -305,52 +305,101 @@ let currentImage = 4;
 const totalImages = 11;
 
 logo.style.transition = 'transform 0.1s ease-in-out';
-function initMobileSlider() {
-  const mobileQuery = window.matchMedia('(max-width: 844px)');
+
+// Mobile-only image slider that actually works
+let slideInterval;
+let isMobile = false;
+
+function checkMobile() {
+  return window.matchMedia('(max-width: 844px)').matches;
+}
+
+function slideImage() {
+  if (!checkMobile()) return; // Exit if not mobile
   
-  if (mobileQuery.matches) {
+  if (currentImage >= totalImages) {
+    currentImage = 4;
+  }
+  
+  logo.style.transform = 'translateX(100%)';
+  logo.innerHTML = `<img class="incrheight" src="assets/${currentImage}.webp" alt="" style="transform: translateX(-100%);" />`;
+  
+  setTimeout(() => {
+    logo.style.transform = 'translateX(0%)';
+    logo.querySelector('img').style.transform = 'translateX(0%)';
+  }, 100);
+  
+  currentImage++;
+  console.log('Current Image:', currentImage);
+  
+  // Clear any existing timeout and set new one
+  clearTimeout(slideInterval);
+  slideInterval = setTimeout(slideImage, 3000);
+}
+
+function initMobileSlider() {
+  const mobile = checkMobile();
+  
+  if (mobile && !isMobile) {
+    // Starting mobile mode
+    isMobile = true;
+    console.log('Initializing mobile slider');
     
-    function slideImage() {
-      if (currentImage >= totalImages) {
-        currentImage = 4;
-      }
-      logo.style.transform = 'translateX(100%)';
-      logo.innerHTML = `<img class="incrheight" src="assets/${currentImage}.webp" alt="" style="transform: translateX(-100%);" />`;
-      setTimeout(() => {
-        logo.style.transform = 'translateX(0%)';
-        logo.querySelector('img').style.transform = 'translateX(0%)';
-      }, 100);
-      currentImage++;
-      console.log('Current Image:', currentImage);
-      setTimeout(slideImage, 3000);
-    }
+    // Add event listeners for buttons
+    rightBtn.addEventListener('click', handleRightClick);
+    leftBtn.addEventListener('click', handleLeftClick);
     
-    rightBtn.addEventListener('click', () => {
-      if (currentImage < totalImages) {
-        currentImage++;
-        slideImage();
-      }
-    });
+    // Start the slider
+    slideImage();
     
-    leftBtn.addEventListener('click', () => {
-      if (currentImage > 4) {
-        currentImage--;
-        slideImage();
-      }
-    });
+  } else if (!mobile && isMobile) {
+    // Switching to desktop mode
+    isMobile = false;
+    console.log('Stopping mobile slider');
     
+    // Clear the interval
+    clearTimeout(slideInterval);
+    
+    // Remove event listeners to prevent duplicates
+    rightBtn.removeEventListener('click', handleRightClick);
+    leftBtn.removeEventListener('click', handleLeftClick);
+  }
+}
+
+// Button click handlers
+function handleRightClick() {
+  if (!checkMobile()) return;
+  
+  clearTimeout(slideInterval);
+  if (currentImage < totalImages) {
+    currentImage++;
     slideImage();
   }
 }
 
-initMobileSlider();
-
-mobileQuery.addEventListener('change', (e) => {
-  if (e.matches) {
-    initMobileSlider();
+function handleLeftClick() {
+  if (!checkMobile()) return;
+  
+  clearTimeout(slideInterval);
+  if (currentImage > 4) {
+    currentImage--;
+    slideImage();
   }
-});
+}
 
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', initMobileSlider);
+
+// Handle screen size changes
+window.addEventListener('resize', initMobileSlider);
+
+// Also run immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileSlider);
+} else {
+  initMobileSlider();
+}
+  
     const footer1btn = document.querySelector('.footer1btn');
     
     footer1btn.style.display = 'none';
