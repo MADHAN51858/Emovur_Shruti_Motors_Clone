@@ -305,37 +305,51 @@ let currentImage = 4;
 const totalImages = 11;
 
 logo.style.transition = 'transform 0.1s ease-in-out';
-
-function slideImage() {
-  if (currentImage >= totalImages) {
-    currentImage = 4;
-  }
-  logo.style.transform = 'translateX(100%)';
-  logo.innerHTML = `<img class="incrheight" src="assets/${currentImage}.webp" alt="" style="transform: translateX(-100%);" />`;
-  setTimeout(() => {
-    logo.style.transform = 'translateX(0%)';
-    logo.querySelector('img').style.transform = 'translateX(0%)';
-  }, 100);
-  currentImage++;
-  console.log('Current Image:', currentImage);
-  setTimeout(slideImage, 3000);
+function initMobileSlider() {
+  const mobileQuery = window.matchMedia('(max-width: 844px)');
   
-  
-  rightBtn.addEventListener('click', () => {
-  if (currentImage < totalImages) {
-    currentImage++;
+  if (mobileQuery.matches) {
+    
+    function slideImage() {
+      if (currentImage >= totalImages) {
+        currentImage = 4;
+      }
+      logo.style.transform = 'translateX(100%)';
+      logo.innerHTML = `<img class="incrheight" src="assets/${currentImage}.webp" alt="" style="transform: translateX(-100%);" />`;
+      setTimeout(() => {
+        logo.style.transform = 'translateX(0%)';
+        logo.querySelector('img').style.transform = 'translateX(0%)';
+      }, 100);
+      currentImage++;
+      console.log('Current Image:', currentImage);
+      setTimeout(slideImage, 3000);
+    }
+    
+    rightBtn.addEventListener('click', () => {
+      if (currentImage < totalImages) {
+        currentImage++;
+        slideImage();
+      }
+    });
+    
+    leftBtn.addEventListener('click', () => {
+      if (currentImage > 4) {
+        currentImage--;
+        slideImage();
+      }
+    });
+    
     slideImage();
   }
-});
-
-leftBtn.addEventListener('click', () => {
-  if (currentImage > 4) {
-    currentImage--;
-    slideImage();
-  }
-});
 }
-slideImage();
+
+initMobileSlider();
+
+mobileQuery.addEventListener('change', (e) => {
+  if (e.matches) {
+    initMobileSlider();
+  }
+});
 
     const footer1btn = document.querySelector('.footer1btn');
     
